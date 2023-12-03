@@ -1,4 +1,5 @@
 mod handlers;
+mod models;
 
 use axum::http;
 use axum::routing::{get, Router};
