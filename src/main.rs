@@ -1,14 +1,16 @@
 mod handlers;
+mod middleware;
 mod models;
 mod repositories;
 
 use axum::http;
+use axum::middleware::from_fn;
 use axum::routing::{get, Router};
 use sqlx::mysql::MySqlPoolOptions;
-use tower_http::trace::{self, TraceLayer};
-use tracing::Level;
 
 use handlers::capacity::capacity_router;
+use middleware::authorization::auth;
+use middleware::logger::create_logger;
 use repositories::capacity_repo::CapacityRepository;
 
 #[tokio::main]
@@ -21,6 +23,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let port = std::env::var("PORT").unwrap_or_else(|_| "3000".to_string());
     let addr = format!("0.0.0.0:{}", port);
 
+    // only checking for the presence of the env var, do not need to store in a variable
+    std::env::var("ACCESS_KEY").expect("missing ACCESS_KEY env");
+
     let database_url = std::env::var("DATABASE_URL").expect("missing DATABASE_URL env");
     let pool = MySqlPoolOptions::new()
         .max_connections(5)
@@ -32,13 +37,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let app = Router::new()
         .route("/", get(health_check))
         .nest("/capacity", capacity_router(&capacity_repo))
-        .layer(
-            TraceLayer::new_for_http()
-                .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
-                .on_response(trace::DefaultOnResponse::new().level(Level::INFO))
-                .on_request(trace::DefaultOnRequest::new().level(Level::INFO))
-                .on_failure(trace::DefaultOnFailure::new().level(Level::ERROR)),
-        );
+        .layer(create_logger())
+        .layer(from_fn(auth));
 
     let server = axum::Server::bind(&addr.parse().unwrap()).serve(app.into_make_service());
 
