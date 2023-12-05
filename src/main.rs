@@ -1,18 +1,15 @@
 mod handlers;
 mod models;
+mod repositories;
 
 use axum::http;
 use axum::routing::{get, Router};
 use sqlx::mysql::MySqlPoolOptions;
-use sqlx::MySqlPool;
 use tower_http::trace::{self, TraceLayer};
 use tracing::Level;
 
 use handlers::capacity::capacity_router;
-
-pub struct AppState {
-    pool: MySqlPool,
-}
+use repositories::capacity_repo::CapacityRepository;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -30,11 +27,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .connect(&database_url)
         .await?;
 
-    let app_state = AppState { pool };
+    let capacity_repo = CapacityRepository { db: pool };
 
     let app = Router::new()
         .route("/", get(health_check))
-        .nest("/capacity", capacity_router(&app_state))
+        .nest("/capacity", capacity_router(capacity_repo))
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
