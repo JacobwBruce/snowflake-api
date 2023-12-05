@@ -30,9 +30,9 @@ async fn update_capacity(
     res
 }
 
-pub fn capacity_router<S>(db: CapacityRepository) -> Router<S> {
+pub fn capacity_router<S>(db: &CapacityRepository) -> Router<S> {
     Router::new()
         .route("/", get(get_capacity))
         .route("/:id", patch(update_capacity))
-        .with_state(db)
+        .with_state(db.clone())
 }

@@ -31,7 +31,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let app = Router::new()
         .route("/", get(health_check))
-        .nest("/capacity", capacity_router(capacity_repo))
+        .nest("/capacity", capacity_router(&capacity_repo))
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
