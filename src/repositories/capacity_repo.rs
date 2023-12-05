@@ -14,7 +14,45 @@ impl CapacityRepository {
             .await
         {
             Ok(capacity) => Ok(capacity),
-            Err(_) => Err(sqlx::Error::RowNotFound),
+            Err(err) => Err(err),
+        }
+    }
+
+    pub async fn get_capacity_by_id(
+        &self,
+        id: i32,
+    ) -> Result<crate::models::capacity::Capacity, sqlx::Error> {
+        match sqlx::query_as::<_, crate::models::capacity::Capacity>(
+            "SELECT * FROM capacity WHERE id = ?",
+        )
+        .bind(&id)
+        .fetch_one(&self.db)
+        .await
+        {
+            Ok(capacity) => Ok(capacity),
+            Err(err) => Err(err),
+        }
+    }
+
+    pub async fn create_capacity(
+        &self,
+        payload: crate::models::capacity::NewCapacity,
+    ) -> Result<sqlx::mysql::MySqlQueryResult, sqlx::Error> {
+        let res = sqlx::query(
+            r#"
+        INSERT INTO capacity (name, location, num_of_vendors_needed, tsa_needed)
+        VALUES (?, ?, ?, ?)
+        "#,
+        )
+        .bind(&payload.name)
+        .bind(&payload.location)
+        .bind(&payload.num_of_vendors_needed)
+        .bind(&payload.tsa_needed)
+        .execute(&self.db)
+        .await;
+        match res {
+            Ok(status) => Ok(status),
+            Err(err) => Err(err),
         }
     }
 
@@ -42,7 +80,21 @@ impl CapacityRepository {
         .await;
         match res {
             Ok(status) => Ok(status),
-            Err(_) => Err(sqlx::Error::RowNotFound),
+            Err(err) => Err(err),
+        }
+    }
+
+    pub async fn delete_capacity(
+        &self,
+        id: i32,
+    ) -> Result<sqlx::mysql::MySqlQueryResult, sqlx::Error> {
+        let res = sqlx::query("DELETE FROM capacity WHERE id = ?")
+            .bind(&id)
+            .execute(&self.db)
+            .await;
+        match res {
+            Ok(status) => Ok(status),
+            Err(err) => Err(err),
         }
     }
 }
