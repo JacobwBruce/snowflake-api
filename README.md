@@ -67,7 +67,11 @@ Follow the instructions below to get a local development server up and running.
    ```sh
    export DATABASE_URL='<your-db-url>'
    ```
-3. Run the project to install packages
+3. Set a ACCESS_KEY environment variabel
+   ```sh
+   export ACCESS_KEY='<your-access-key>'
+   ```
+4. Run the project to install packages
    ```sh
    cargo run
    ```
