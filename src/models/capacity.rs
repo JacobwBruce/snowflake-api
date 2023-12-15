@@ -1,19 +1,51 @@
 use serde::{Deserialize, Serialize};
-use sqlx::FromRow;
 
-#[derive(Deserialize, Serialize, Debug, FromRow)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Capacity {
-    pub id: i32,
+    pub id: i64,
+    pub city_location: String,
+    pub start_time: String,
+    pub completion_time: String,
+    pub last_modified_time: Option<String>,
+    pub email: String,
     pub name: String,
-    pub location: String,
-    pub num_of_vendors_needed: i32,
-    pub tsa_needed: bool,
+    pub operation_manager: String,
+    pub vehicle_type_needed: String,
+    pub number_of_ics_needed: i32,
+    pub tsa_required: Option<String>,
+    pub marken: Option<String>,
+    pub parcel_shield: Option<String>,
+    pub dg: Option<String>,
+    pub dg7: Option<String>,
+    pub monday: Option<String>,
+    pub tuesday: Option<String>,
+    pub wednesday: Option<String>,
+    pub thursday: Option<String>,
+    pub friday: Option<String>,
+    pub saturday: Option<String>,
+    pub sunday: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct NewCapacity {
     pub name: String,
-    pub location: String,
-    pub num_of_vendors_needed: i32,
-    pub tsa_needed: bool,
+    pub email: String,
+    pub city_location: String,
+    pub start_time: String,
+    pub completion_time: String,
+    pub operation_manager: String,
+    pub vehicle_type_needed: String,
+    pub number_of_ics_needed: i32,
+    pub tsa_required: Option<String>,
+    pub marken: Option<String>,
+    pub parcel_shield: Option<String>,
+    pub dg: Option<String>,
+    pub dg7: Option<String>,
+    pub monday: Option<String>,
+    pub tuesday: Option<String>,
+    pub wednesday: Option<String>,
+    pub thursday: Option<String>,
+    pub friday: Option<String>,
+    pub saturday: Option<String>,
+    pub sunday: Option<String>,
 }
