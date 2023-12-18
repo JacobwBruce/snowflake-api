@@ -23,7 +23,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     std::env::var("ACCESS_KEY").expect("missing ACCESS_KEY env");
 
     let client = create_snowflake_client().await?;
+
+    println!("Creating Snowflake session");
     let session = Box::new(client.create_session().await?);
+    println!("Snowflake session created");
+
     let capacity_repo = CapacityRepository {
         session: Box::leak(session),
     };
@@ -51,14 +55,7 @@ async fn health_check() -> http::StatusCode {
 }
 
 async fn create_snowflake_client() -> Result<SnowflakeClient, Box<dyn std::error::Error>> {
-    println!(
-        "username: {}",
-        std::env::var("SNOWFLAKE_USERNAME").expect("missing SNOWFLAKE_USERNAME env"),
-    );
-    println!(
-        "password: {}",
-        std::env::var("SNOWFLAKE_PASSWORD").expect("missing SNOWFLAKE_PASSWORD env"),
-    );
+    println!("Creating Snowflake client");
     let client = SnowflakeClient::new(
         std::env::var("SNOWFLAKE_USERNAME")
             .expect("missing SNOWFLAKE_USERNAME env")
@@ -95,5 +92,6 @@ async fn create_snowflake_client() -> Result<SnowflakeClient, Box<dyn std::error
         },
     )?;
 
+    println!("Snowflake client created");
     Ok(client)
 }
