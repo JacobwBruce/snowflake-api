@@ -51,6 +51,14 @@ async fn health_check() -> http::StatusCode {
 }
 
 async fn create_snowflake_client() -> Result<SnowflakeClient, Box<dyn std::error::Error>> {
+    println!(
+        "username: {}",
+        std::env::var("SNOWFLAKE_USERNAME").expect("missing SNOWFLAKE_USERNAME env"),
+    );
+    println!(
+        "password: {}",
+        std::env::var("SNOWFLAKE_PASSWORD").expect("missing SNOWFLAKE_PASSWORD env"),
+    );
     let client = SnowflakeClient::new(
         std::env::var("SNOWFLAKE_USERNAME")
             .expect("missing SNOWFLAKE_USERNAME env")
