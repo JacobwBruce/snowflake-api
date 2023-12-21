@@ -16,5 +16,6 @@ COPY . .
 RUN cargo build --release
 
 FROM gcr.io/distroless/cc-debian12 AS runtime
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /app/target/release/vic-snowflake /usr/local/bin/vic-snowflake
 ENTRYPOINT ["/usr/local/bin/vic-snowflake"]
