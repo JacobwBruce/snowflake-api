@@ -16,5 +16,10 @@ COPY . .
 RUN cargo build --release
 
 FROM rust:1.72-slim AS template-rust
+RUN apt-get update && apt-get install -y \
+    libssl-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /app/target/release/vic-snowflake /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/vic-snowflake"]
