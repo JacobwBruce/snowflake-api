@@ -15,11 +15,6 @@ RUN cargo chef cook --recipe-path recipe.json
 COPY . .
 RUN cargo build --release
 
-FROM rust:1.72-slim AS template-rust
-RUN apt-get update && apt-get install -y \
-    libssl-dev \
-    pkg-config \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY --from=builder /app/target/release/vic-snowflake /usr/local/bin
+FROM gcr.io/distroless/cc-debian12 AS runtime
+COPY --from=builder /app/target/release/vic-snowflake /usr/local/bin/vic-snowflake
 ENTRYPOINT ["/usr/local/bin/vic-snowflake"]
