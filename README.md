@@ -63,11 +63,11 @@ Follow the instructions below to get a local development server up and running.
    ```sh
    git clone https://github.com/American-Expediting/vic-snowflake.git
    ```
-2. Set a DATABASE_URL environment variabel
+2. Set a DATABASE_URL environment variable
    ```sh
    export DATABASE_URL='<your-db-url>'
    ```
-3. Set a ACCESS_KEY environment variabel
+3. Set a ACCESS_KEY environment variable
    ```sh
    export ACCESS_KEY='<your-access-key>'
    ```
